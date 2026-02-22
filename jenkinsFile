@@ -7,14 +7,6 @@ pipeline {
         APP_DIR  = "/home/ec2-user/server-be"
     }
 
-    stage('Install Dependencies') {
-        steps {
-            sh 'node -v'
-            sh 'npm -v'
-            sh 'npm install'
-        }
-    }
-
     stages {
 
         stage('Checkout Code') {
@@ -27,6 +19,8 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
+                sh 'node -v'
+                sh 'npm -v'
                 sh 'npm install'
             }
         }
