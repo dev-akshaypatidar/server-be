@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        EC2_HOST = "13.234.17.129"          // Your EC2 IP
-        EC2_USER = "ec2-user"              // Change if Ubuntu -> ubuntu
+        EC2_HOST = "13.234.17.129"
+        EC2_USER = "ec2-user"
         APP_DIR  = "/home/ec2-user/server-be"
     }
 
@@ -19,35 +19,20 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
-                sh 'npm install'
-            }
-        }
-
-        stage('Build') {
-            steps {
-                sh 'npm run build || echo "No build script found"'
+                bat 'npm install'
             }
         }
 
         stage('Deploy to EC2') {
             steps {
                 sshagent(['ec2-ssh']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                            if [ ! -d "${APP_DIR}" ]; then
-                                git clone https://github.com/dev-akshaypatidar/server-be.git ${APP_DIR}
-                            fi
-                            
-                            cd ${APP_DIR}
-                            git pull origin main
-                            npm install
-                            
-                            pm2 delete server-be || true
-                            pm2 start npm --name "server-be" -- start
-                            pm2 save
-                        '
+                    bat """
+                        ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% ^
+                        "cd ${APP_DIR} || mkdir -p ${APP_DIR} && ^
+                        cd ${APP_DIR} && ^
+                        git pull origin master && ^
+                        npm install && ^
+                        pm2 restart server-be || pm2 start npm --name server-be -- start"
                     """
                 }
             }
@@ -63,5 +48,3 @@ pipeline {
         }
     }
 }
-
-
