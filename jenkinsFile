@@ -5,6 +5,7 @@ pipeline {
         EC2_HOST = "13.234.17.129"
         EC2_USER = "ec2-user"
         APP_DIR  = "/home/ec2-user/server-be"
+        PEM_PATH = "C:\\Users\\Asus\\Downloads\\be-prod.pem"
     }
 
     stages {
@@ -25,16 +26,14 @@ pipeline {
 
         stage('Deploy to EC2') {
             steps {
-                sshagent(['Server-ssh']) {
-                    bat """
-                        ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% ^
-                        "cd ${APP_DIR} || mkdir -p ${APP_DIR} && ^
-                        cd ${APP_DIR} && ^
-                        git pull origin master && ^
-                        npm install && ^
-                        pm2 restart server-be || pm2 start npm --name server-be -- start"
-                    """
-                }
+                bat """
+                ssh -i "%PEM_PATH%" -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% ^
+                "if [ ! -d ${APP_DIR} ]; then git clone https://github.com/dev-akshaypatidar/server-be.git ${APP_DIR}; fi && ^
+                cd ${APP_DIR} && ^
+                git pull origin master && ^
+                npm install && ^
+                pm2 restart server-be || pm2 start npm --name server-be -- start"
+                """
             }
         }
     }
