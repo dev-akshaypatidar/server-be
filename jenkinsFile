@@ -7,8 +7,12 @@ pipeline {
         APP_DIR  = "/home/ec2-user/server-be"
     }
 
-    tools {
-        nodejs "NodeJS_18"                 // Must match Jenkins Global Tool name
+    stage('Install Dependencies') {
+        steps {
+            sh 'node -v'
+            sh 'npm -v'
+            sh 'npm install'
+        }
     }
 
     stages {
