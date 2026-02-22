@@ -1,0 +1,30 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            if [ ! -d /home/ec2-user/server-be ]; then
+              git clone https://github.com/dev-akshaypatidar/server-be.git /home/ec2-user/server-be
+            fi
+            cd /home/ec2-user/server-be
+            git pull origin master
+            npm install
+            pm2 restart server-be || pm2 start npm --name server-be -- start
+            pm2 save
