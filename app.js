@@ -7,6 +7,7 @@ const connectDB = require('./config/db');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var orderRoutes = require('./routes/orderRoutes');
+const gql = require('./gql');
 
 var app = express();
 
@@ -21,13 +22,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/health', (req,res)=>{
     res.send({
         status:'OK',
-        msg:'Server is running.... at 4000'
+        msg:'Server is running.... at 9008'
     })
 })
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/orders', orderRoutes);
+
+app.use("/graphql", gql);
 
 
 
