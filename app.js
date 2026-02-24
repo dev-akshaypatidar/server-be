@@ -5,7 +5,8 @@ var logger = require('morgan');
 const connectDB = require('./config/db');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/userRoutes');
+var orderRoutes = require('./routes/orderRoutes');
 
 var app = express();
 
@@ -26,5 +27,8 @@ app.get('/health', (req,res)=>{
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/orders', orderRoutes);
+
+
 
 module.exports = app;
