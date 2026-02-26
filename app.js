@@ -7,7 +7,6 @@ const connectDB = require('./config/db');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/userRoutes');
 var orderRoutes = require('./routes/orderRoutes');
-const gql = require('./gql');
 
 var app = express();
 
@@ -30,7 +29,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/orders', orderRoutes);
 
-app.use("/graphql", gql);
 
 
 
