@@ -4,6 +4,5 @@ const userController = require("../controllers/userControllers");
 
 router.post("/add", userController.addUser);
 router.post("/bulk", userController.addUsersBulk);
-router.delete("/rmdir", userController.removeDuplicateUsers);
 
 module.exports = router;
